@@ -1,75 +1,110 @@
 import matplotlib.pyplot as plt
 import networkx as nx
 
-# === pede o arquivo ao usuário ===
-nome_arquivo = input("Digite o nome do arquivo .txt: ").strip()
+def ler_arquivo():
+    nome = input("Digite o nome do arquivo .txt: ").strip()
+    with open(nome, "r") as arquivo:
+        conteudo = arquivo.readlines()
+    return conteudo
 
-# === lê o arquivo ===
-with open(nome_arquivo, "r") as f:
-    linhas = f.readlines()
+def criar_lista_adjacencia(linhas):
+    lista = {}
+    for linha in linhas[1:]:
+        a, b = linha.strip().split()
+        if a not in lista:
+            lista[a] = []
+        if b not in lista:
+            lista[b] = []
+        lista[a].append(b)
+        lista[b].append(a)
+    return lista
 
-print("\n=== Conteúdo do arquivo escolhido ===")
+def mostrar_vizinhos(lista_adj):
+    print("\nVizinhos de cada vértice:")
+    for vertice in lista_adj:
+        print(f"{vertice}: {', '.join(lista_adj[vertice])}")
+
+def mostrar_graus(lista_adj):
+    print("\nGraus dos vértices:")
+    for vertice in lista_adj:
+        grau = len(lista_adj[vertice])
+        print(f"{vertice}: grau = {grau}")
+
+def listar_arestas(lista_adj):
+    arestas = []
+    for v in lista_adj:
+        for u in lista_adj[v]:
+            if (u, v) not in arestas:
+                arestas.append((v, u))
+    return arestas
+
+def verificar_bipartido(lista_adj):
+    cor = {}
+    fila = []
+    eh_bipartido = True
+
+    for vertice in lista_adj:
+        if vertice not in cor:
+            cor[vertice] = 0
+            fila.append(vertice)
+
+            while fila:
+                atual = fila.pop(0)
+                for vizinho in lista_adj[atual]:
+                    if vizinho not in cor:
+                        cor[vizinho] = 1 - cor[atual]
+                        fila.append(vizinho)
+                    elif cor[vizinho] == cor[atual]:
+                        eh_bipartido = False
+
+    grupo1 = [v for v in cor if cor[v] == 0]
+    grupo2 = [v for v in cor if cor[v] == 1]
+
+    return eh_bipartido, grupo1, grupo2
+
+def desenhar_grafo(lista_adj, bipartido, grupo1, grupo2):
+    grafo = nx.Graph()
+
+    for v in lista_adj:
+        for u in lista_adj[v]:
+            grafo.add_edge(v, u)
+
+    cores = []
+    for no in grafo.nodes():
+        if bipartido and no in grupo1:
+            cores.append("lightblue")
+        elif bipartido and no in grupo2:
+            cores.append("lightcoral")
+        else:
+            cores.append("lightgray")
+
+    nx.draw(grafo, with_labels=True, node_color=cores)
+    plt.title("Visualização do Grafo")
+    plt.show()
+
+linhas = ler_arquivo()
+
+print("\n=== Conteúdo do arquivo ===")
 for linha in linhas:
     print(linha.strip())
-print("=====================================")
+print("============================")
 
-# === cria a lista de adjacência ===
-adj = {}
-for linha in linhas[1:]:  # pula a primeira linha (ND)
-    v1, v2 = linha.strip().split()
-    if v1 not in adj:
-        adj[v1] = []
-    if v2 not in adj:
-        adj[v2] = []
-    adj[v1].append(v2)
-    adj[v2].append(v1)
+adjacencia = criar_lista_adjacencia(linhas)
 
-# === mostra lista de adjacência ===
 print("\nLista de Adjacência:")
-for v in adj:
-    print(v, "->", adj[v])
+for v in adjacencia:
+    print(f"{v} -> {adjacencia[v]}")
 
-# === lista arestas (sem duplicar) ===
-arestas = []
-for v in adj:
-    for u in adj[v]:
-        if (u, v) not in arestas:
-            arestas.append((v, u))
+mostrar_vizinhos(adjacencia)
 
-print("\nArestas do grafo:", arestas)
+arestas = listar_arestas(adjacencia)
+print("\nArestas do grafo:")
+print(arestas)
 
-# === graus dos vértices ===
-print("\nGraus dos vértices:")
-for v in adj:
-    print(v, "-> grau =", len(adj[v]))
+mostrar_graus(adjacencia)
 
-# === verifica bipartição ===
-cor = {}
-bipartido = True
-for vertice in adj:
-    if vertice not in cor:
-        cor[vertice] = 0
-        fila = [vertice]
+bipartido, grupo1, grupo2 = verificar_bipartido(adjacencia)
 
-        while len(fila) > 0:
-            atual = fila.pop(0)
-            for vizinho in adj[atual]:
-                if vizinho not in cor:
-                    cor[vizinho] = 1 - cor[atual]
-                    fila.append(vizinho)
-                elif cor[vizinho] == cor[atual]:
-                    bipartido = False
-
-grupo1 = []
-grupo2 = []
-if bipartido:
-    for v in cor:
-        if cor[v] == 0:
-            grupo1.append(v)
-        else:
-            grupo2.append(v)
-
-# === mostra resultado da bipartição ===
 if bipartido:
     print("\nO grafo É bipartido!")
     print("Bloco 1:", grupo1)
@@ -77,21 +112,4 @@ if bipartido:
 else:
     print("\nO grafo NÃO é bipartido.")
 
-# === visualização com networkx ===
-G = nx.Graph()
-for v in adj:
-    for u in adj[v]:
-        G.add_edge(v, u)
-
-cores = []
-for no in G.nodes():
-    if bipartido and no in grupo1:
-        cores.append("lightblue")
-    elif bipartido and no in grupo2:
-        cores.append("lightcoral")
-    else:
-        cores.append("lightgray")
-
-nx.draw(G, with_labels=True, node_color=cores)
-plt.title("Visualização do Grafo")
-plt.show()
+desenhar_grafo(adjacencia, bipartido, grupo1, grupo2)
