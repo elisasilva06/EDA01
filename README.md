@@ -1,8 +1,8 @@
-Projeto – Teoria dos Grafos
-Alunas : Ana Elisa Oliveira Silva e Samyra de Araujo Lobo Silva
-Tema C: Agendador de Processos Concorrentes
-Estrutura de Dados: Lista de Adjacência
-Linguagem: Python (Google Colab)
+- Projeto – Teoria dos Grafos
+- Alunas : Ana Elisa Oliveira Silva e Samyra de Araujo Lobo Silva
+- Tema C: Agendador de Processos Concorrentes
+- Estrutura de Dados: Lista de Adjacência
+- Linguagem: Python (Google Colab)
 
 🎯 Objetivo
 
@@ -19,8 +19,9 @@ processos_medio.txt → exemplo intermediário
 
 processos_impossivel.txt → exemplo onde o agendamento é impossível
 
+
 * Como Compilar e Executar o Projeto 
-1. Execução no Google Colab (recomendado)
+- Execução no Google Colab (recomendado)
 
 O Google Colab já possui o Python e as bibliotecas necessárias instaladas, então não é preciso configurar nada.
 Siga os passos abaixo:
