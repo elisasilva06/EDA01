@@ -48,3 +48,14 @@ processos_impossivel.txt
 Quando o programa pedir, digite o nome de um dos arquivos de entrada (por exemplo processos_simples.txt).
 
 O programa mostrará o resultado no console e exibirá o gráfico colorido do grafo
+
+
+- Execução com Arquivo Executável (Windows 10/11)
+
+Também é possível executar o projeto por meio de um arquivo executável, sem precisar instalar o Python ou bibliotecas adicionais.
+
+O executável foi criado a partir do código principal, porém:
+
+o arquivo de entrada já está definido dentro do código (não é necessário digitar o nome durante a execução);
+
+e a parte do desenho do grafo foi removida, pois a biblioteca gráfica não foi compatível com a compilação.
